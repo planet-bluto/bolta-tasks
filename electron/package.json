@@ -1,0 +1,43 @@
+{
+  "name": "bolta-tasks",
+  "version": "1.0.0",
+  "description": "An Amazing Capacitor App",
+  "author": {
+    "name": ">PLANET_BLUTO",
+    "email": "plush.gamer.456@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/planet-bluto/bolta-tasks.git"
+  },
+  "license": "MIT",
+  "main": "build/src/index.js",
+  "scripts": {
+    "v": "node -v",
+    "build": "tsc && electron-rebuild",
+    "electron:start-live": "node ./live-runner.js",
+    "electron:start": "npm run build && electron --inspect=5858 ./",
+    "electron:pack": "npm run build && electron-builder build --dir -c ./electron-builder.config.json",
+    "electron:make": "npm run build && electron-builder build -c ./electron-builder.config.json -p always"
+  },
+  "dependencies": {
+    "@capacitor-community/electron": "^5.0.0",
+    "chokidar": "~3.5.3",
+    "electron-is-dev": "~2.0.0",
+    "electron-serve": "~1.1.0",
+    "electron-unhandled": "~4.0.1",
+    "electron-updater": "^6.1.7",
+    "electron-window-state": "^5.0.3",
+    "node": "18.19.0"
+  },
+  "devDependencies": {
+    "electron": "^26.2.2",
+    "electron-builder": "~23.6.0",
+    "electron-rebuild": "^3.2.9",
+    "typescript": "^5.0.4"
+  },
+  "keywords": [
+    "capacitor",
+    "electron"
+  ]
+}

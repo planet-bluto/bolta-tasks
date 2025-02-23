@@ -42,6 +42,32 @@ animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1);
 		}
 }
 
+div[data-pc-name="contextmenu"] {
+  background: var(--theme-back-3);
+  border-radius: 15px;
+}
+
+div[data-pc-name="contextmenu"] > ul {
+  list-style: none;
+  padding: 15px;
+  margin: 0px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+li[role="menuitem"] {
+  opacity: 0.5;
+  font-size: 24px;
+}
+
+li[role="menuitem"]:hover {
+  opacity: 1.0;
+}
+
+li.contextmenu-header { opacity: 1.0; }
+li.contextmenu-header:hover { opacity: 1.0; }
+
 :root {
   --theme-back-0: #0d0d0d;
   --theme-back-1: #151515;
@@ -286,24 +312,24 @@ select:hover {
 
 /* width */
 *::-webkit-scrollbar {
-/*  width: 10px;*/
+ width: 10px;
 /*  height: calc(100% - 128px);*/
   border-radius: 10px;
 }
 
 /* Track */
 *::-webkit-scrollbar-track {
-  background: #0000003c;
+  background: #0000001c;
   border-radius: 10px;
 }
   
 /* Handle */
 *::-webkit-scrollbar-thumb {
-  background: #ffffff1c;
+  background: #ffffff0c;
   border-radius: 10px;
 }
 
 *::-webkit-scrollbar-corner {
-  background: #0000003c;
+  background: #0000001c;
   border-radius: 10px;
 }

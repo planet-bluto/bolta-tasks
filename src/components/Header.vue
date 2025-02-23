@@ -4,14 +4,41 @@ import {Router} from "../router"
 
 import HeaderButton from "./HeaderButton.vue"
 import { isMobile, sidebarOpened } from "../persist";
+import { MenuItem } from "primevue/menuitem";
+import { Ref, ref } from "vue";
+import { openPlannerTaskPopup } from "../popups/new_task";
+import { openSchedulePopup } from "../popups/new_schedule";
+import { ContextMenu } from "primevue";
+import { openProjectPopup } from "../popups/new_project";
+
+const menu = ref();
+
+const items_base: MenuItem[] = [
+    { label: 'New PlannerTask', command: () => {
+        openPlannerTaskPopup()
+    }},
+    { label: 'New Project', command: () => {
+        openProjectPopup()
+    }},
+    { label: 'New Schedule', command: () => {
+        openSchedulePopup()
+    }},
+]
+const items: Ref<MenuItem[]> = ref(items_base);
+
+function openContextMenu(event: MouseEvent) {
+    // print("FUCK YOU", menu.value)
+    menu.value.show(event)
+}
 </script>
 
 <template>
+<ContextMenu ref="menu" :model="items" />
 <div id="header">
     <button id="sidebar-button" v-if="isMobile" @click="sidebarOpened = true">></button>
     <p id="header-text">{{ Router.header }}</p>
     <div id="header-buttons">
-        <HeaderButton id="add" icon="add" :func="Router.addButtonFunc.value"/>
+        <HeaderButton id="add" icon="add" :func="Router.addButtonFunc.value" @contextmenu="event => openContextMenu(event)"/>
         <HeaderButton id="notification" icon="notification" :func="() => {console.log(`Opening Notifications!`)}"/>
         <HeaderButton id="settings" icon="settings" :func="() => {console.log(`Opening Settings!`)}"/>
     </div>

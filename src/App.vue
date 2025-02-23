@@ -4,8 +4,9 @@ import Sidebar from "./components/Sidebar.vue"
 
 import TaskListView from "./components/views/TaskList.vue"
 import PlannerView from "./components/views/Planner.vue"
-import FocusSessionView from "./components/views/FocusSession.vue"
-import SchedulesView from "./components/views/SchedulesView.vue"
+import FocusTimerView from "./components/views/FocusTimer.vue"
+import FocusSessionsView from "./components/views/FocusSessions.vue"
+import SchedulesView from "./components/views/Schedules.vue"
 
 import Popups from "./components/Popups.vue"
 
@@ -36,7 +37,8 @@ const elem = ref()
         <!-- Views -->
         <TaskListView v-show="Router.current.value == Views.TASKS"></TaskListView>
         <PlannerView v-show="Router.current.value == Views.PLANNER"></PlannerView>
-        <FocusSessionView v-show="Router.current.value == Views.FOCUS"></FocusSessionView>
+        <FocusTimerView v-show="Router.current.value == Views.TIMER"></FocusTimerView>
+        <FocusSessionsView v-show="Router.current.value == Views.SESSIONS"></FocusSessionsView>
         <SchedulesView v-show="Router.current.value == Views.SCHEDULES"></SchedulesView>
       </div>
     </div>

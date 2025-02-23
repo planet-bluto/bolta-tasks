@@ -9,7 +9,8 @@ import { openPlannerTaskPopup } from './popups/new_task'
 export enum Views {
     TASKS,
     PLANNER,
-    FOCUS,
+    TIMER,
+    SESSIONS,
     SCHEDULES
 }
 

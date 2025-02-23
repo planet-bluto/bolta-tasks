@@ -16,6 +16,8 @@ import { openPlannerTaskPopup } from "../../popups/new_task";
 //   tasks.value = foundTasks
 // })
 
+// erm- fuck you copilot
+
 const TaskListTasks: ComputedRef<Task[]> = computed(() => {
   let returnTasks = PlannerTasks.value.filter(task => {
     return TaskListFilters.value.every(filter => filter(task))
@@ -79,6 +81,7 @@ const items_base: MenuItem[] = [
 const items: Ref<MenuItem[]> = ref(items_base);
 function openTaskContextMenu(event: MouseEvent, task: Task) {
   // print(menu)
+  print("FUCK YOU", menu.value)
   focusedTask.value = task
   menu.value.show(event)
 }

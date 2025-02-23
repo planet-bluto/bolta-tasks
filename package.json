@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "preview": "vite preview",
-    "build_android": "vue-tsc -b && vite build && npx cap sync"
+    "build_android": "vue-tsc -b && vite build && npx cap sync",
+    "build_electron": "vue-tsc -b && vite build && copy-folder ./dist ./electron/app && cd electron && npm run build && npm run electron:pack && cd ..",
+    "bro": "copy-folder ./dist ./electron/app"
   },
   "dependencies": {
     "@capacitor-community/electron": "^5.0.1",
@@ -16,6 +18,8 @@
     "@capacitor/local-notifications": "^7.0.0",
     "@sapphire/snowflake": "^3.5.5",
     "axios": "^1.7.9",
+    "bolta-tasks-core": "^0.0.3",
+    "del-cli": "^6.0.0",
     "eventemitter3": "^5.0.1",
     "localforage": "^1.10.0",
     "moment": "^2.30.1",
@@ -28,6 +32,7 @@
     "@capacitor/cli": "^7.0.1",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/tsconfig": "^0.7.0",
+    "copy-folder-util": "^1.1.4",
     "ts-loader": "^9.5.2",
     "typescript": "~5.7.2",
     "vite": "^6.1.0",

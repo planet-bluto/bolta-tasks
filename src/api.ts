@@ -1,7 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import { computed, ComputedRef, Ref, ref } from "vue";
-import { PlannerTask } from "bolta-tasks-core";
-import { Schedule } from "bolta-tasks-core";
+import { PlannerTask, ProjectTask, Schedule, Project } from "bolta-tasks-core";
 import EventEmitter from "eventemitter3";
 
 import { Interfacer } from "bolta-tasks-core"
@@ -48,11 +47,14 @@ class APIDatabase {
       this.ref.value = objs
       print(`DATABASE [${this.db_key}]: `, this.ref.value)
       fetched.value.add(this.db_key)
+
+      if (this.db_key == "schedules") {
+        print("Setting Interfacer: ", Interfacer)
+        Interfacer["resolveSchedule"] = (schedule_id: string) => this.findEntry(schedule_id)
+      }
+
       if (to_fetch.every(key => fetched.value.has(key))) {
         FetchedEvent.emit("fetched")
-        if (this.db_key == "schedules") {
-          Interfacer["resolveSchedule"] = (schedule_id: string) => this.findEntry(schedule_id)
-        }
       }
     })
   }
@@ -94,7 +96,9 @@ class APIDatabase {
 }
 
 export const PlannerTasks = new APIDatabase("planner_tasks", PlannerTask)
+export const ProjectTasks = new APIDatabase("project_tasks", ProjectTask)
 export const Schedules = new APIDatabase("schedules", Schedule)
+export const Projects = new APIDatabase("projects", Project)
 
 export function API_Refresh() {
   PlannerTasks._refresh()

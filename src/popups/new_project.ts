@@ -1,8 +1,8 @@
 import moment from "moment";
-import { HeaderPopupElement, TextPopupInput, ClockTimePopupInput, DurationPopupInput, MultiPopupInput, CardPopupInput, CalendarDatePopupInput, NumberPopupInput, MultiSelectPopupInput, WeekPopupInput, SelectPopupInput, DateTimePopupInput, SubmitPopupButton, CheckboxPopupInput, PopupDriver } from "../popups";
-import { InstanceRuleType, Weekdays, ReminderType } from "bolta-tasks-core";
-import { Schedule, ScheduleStatic } from "bolta-tasks-core";
-import { Schedules } from "../api";
+import { HeaderPopupElement, TextPopupInput, ClockTimePopupInput, DurationPopupInput, MultiPopupInput, CardPopupInput, CalendarDatePopupInput, NumberPopupInput, MultiSelectPopupInput, WeekPopupInput, SelectPopupInput, DateTimePopupInput, SubmitPopupButton, CheckboxPopupInput, PopupDriver } from '../popups';
+import { InstanceRuleType, Weekdays, ReminderType, CleanProjectStatuses, ProjectStatus } from "bolta-tasks-core";
+import { Project, ProjectStatic } from "bolta-tasks-core";
+import { Projects } from "../api";
 
 const _ = null // best
 
@@ -26,8 +26,8 @@ function instanceRuleMake(elements: any[]) {
     return (() => elements)
 }
 
-export const NewSchedulePopup = () => [
-    [new HeaderPopupElement("New Schedule")],
+export const NewProjectPopup = () => [
+    [new HeaderPopupElement("New Project")],
     [new TextPopupInput("Title", "title")],
     [new MultiPopupInput("Rules", "rules", [], () => ({
         [InstanceRuleType.SINGLE]: {label: "Once", input: () => new CardPopupInput(_, _, _, instanceRuleMake([
@@ -60,22 +60,22 @@ export const NewSchedulePopup = () => [
             [new NumberPopupInput("Every", "every", 1, 1)],
         ]))},
     }))],
+    [new SelectPopupInput("Status", "status", CleanProjectStatuses, ProjectStatus.ACTIVE, "number")],
     [new SubmitPopupButton()],
 ]
 
-export function openSchedulePopup(schedule: Schedule = null, newAnyway = false) {
-  let input_schedule = schedule
-  let {html_elems, inputs} = PopupDriver.open(NewSchedulePopup(), input_schedule, async (data: ScheduleStatic) => {
+export function openProjectPopup(project: Project = null, newAnyway = false) {
+  let input_project = project
+  let {html_elems, inputs} = PopupDriver.open(NewProjectPopup(), input_project, async (data: ProjectStatic) => {
     // let new_schedule = new Schedule(data)
-
     if (newAnyway) {
-        delete input_schedule["_id"]
+      delete input_project["_id"]
     }
-
+    
     if (data._id) {
-        Schedules.edit(data._id, data)
+        Projects.edit(data._id, data)
     } else {
-        Schedules.add(data)
+        Projects.add(data)
     }
   })
 }

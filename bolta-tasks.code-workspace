@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"name": "bolta-tasks-core",
+			"path": "../bolta-tasks-core"
+		},
+		{
+			"name": "bolta-tasks",
+			"path": "."
+		},
+		{
+			"name": "bolta-tasks-api",
+			"path": "../bolta-tasks-api"
+		}
+	],
+	"settings": {}
+}

@@ -2,7 +2,7 @@
 </script>
 
 <template>
-<h1>Focusing...</h1>
+<h1>Timering...</h1>
 </template>
 
 <style scoped>

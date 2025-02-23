@@ -23,8 +23,14 @@ const props = defineProps<{
 
 let datedTaskMoment = ((key: "time_start" | "time_due") => {
   let cloned_date = JSON.parse(JSON.stringify(FocusedDate.value))
-  let obj = Object.assign(cloned_date, (props.task.onDate(cloned_date) as PlannerTaskDated)[key])
-  return moment(obj)
+  let taskOnDate = (props.task.onDate(cloned_date) as PlannerTaskDated)
+  // print("DATE: ", "\n\ncloned_date: ", cloned_date, "\n\nprops.task: ", props.task, "\n\ntaskOnDate: ", taskOnDate)
+  if (taskOnDate) {
+    let obj = Object.assign(cloned_date, taskOnDate[key])
+    return moment(obj)
+  } else {
+    return moment()
+  }
 })
 
 const getStatus = computed(() => {

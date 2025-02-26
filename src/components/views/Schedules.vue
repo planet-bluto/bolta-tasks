@@ -14,7 +14,7 @@ import { openContextMenu, schedule_items } from '../../contextmenu';
 <template>
 <div>
   <div class="schedule-view">
-    <ListSchedule v-for="schedule in Schedules.value" :schedule="(schedule as Schedule)" @contextmenu="event => openContextMenu(event, schedule_items, {schedule}, schedule.title)"></ListSchedule>
+    <ListSchedule v-for="schedule in Schedules.value" :schedule="(schedule as Schedule)" @contextmenu="event => openContextMenu(event, schedule_items, schedule, schedule.title)"></ListSchedule>
   </div>
 </div>
 </template>

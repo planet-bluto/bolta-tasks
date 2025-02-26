@@ -30,7 +30,7 @@ const items_base: MenuItem[] = [
     <button id="sidebar-button" v-if="isMobile" @click="sidebarOpened = true">></button>
     <p id="header-text">{{ Router.header }}</p>
     <div id="header-buttons">
-        <HeaderButton id="add" icon="add" :func="Router.addButtonFunc.value" @contextmenu="event => {openContextMenu(event, items_base, null, 'New Thing!')}"/>
+        <HeaderButton id="add" icon="add" :func="Router.addButtonFunc.value" @contextmenu="event => {openContextMenu(event, items_base, null, null)}"/>
         <HeaderButton id="notification" icon="notification" :func="() => {console.log(`Opening Notifications!`)}"/>
         <HeaderButton id="settings" icon="settings" :func="() => {console.log(`Opening Settings!`)}"/>
     </div>

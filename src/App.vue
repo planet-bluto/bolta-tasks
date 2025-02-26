@@ -35,7 +35,7 @@ onMounted(() => {
     <Popups></Popups>
     <Sidebar id="sidebar" :mobile="isMobile"></Sidebar>
 
-    <div @contextmenu="event => {openContextMenu(event, items_base, {pingle: 'so true'}, 'Mao!')}" id="right" :mobile="isMobile">
+    <div id="right" :mobile="isMobile">
       <Header></Header>
 
       <div id="main">

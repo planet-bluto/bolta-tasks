@@ -50,7 +50,7 @@ const TaskListTasks: ComputedRef<Task[]> = computed(() => {
 
 <template>
 <TransitionGroup class="task-list" name="list" tag="div">
-  <ListTask v-for="(task) in TaskListTasks" :task="task" :key="task._id" @contextmenu="event => openContextMenu(event, task_items, {task}, task.title)"></ListTask>
+  <ListTask v-for="(task) in TaskListTasks" :task="task" :key="task._id" @contextmenu="event => openContextMenu(event, task_items, task, task.title)"></ListTask>
 </TransitionGroup>
 </template>
 

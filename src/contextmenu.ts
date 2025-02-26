@@ -2,9 +2,10 @@ import { MenuItem } from "primevue/menuitem"
 import { Ref, ref } from "vue";
 import { openSchedulePopup } from "./popups/new_schedule";
 import Schedules from "./components/views/Schedules.vue";
-import { PlannerTasks, Projects } from "./api";
+import { FocusSessions, PlannerTasks, Projects } from "./api";
 import { openProjectPopup } from "./popups/new_project";
 import { openPlannerTaskPopup } from "./popups/new_task";
+import { openFocusSessionPopup } from "./popups/new_focus_session";
 
 export const menu = ref();
 export const items_base: MenuItem[] = [
@@ -38,20 +39,20 @@ export function openContextMenu(event: MouseEvent, items: MenuItem[], data: any 
 //// Generic Task Context Menu ////
 export const task_items: MenuItem[] = [
   { label: 'Edit', command: (event) => {
-    let {task} = event.item.data
+    let task = event.item.data
     if (task.type == "planner") {
       openPlannerTaskPopup(task)
     }
   }},
   { label: 'Clone', command: (event) => {
-    let {task} = event.item.data
+    let task = event.item.data
     if (task.type == "planner") {
       openPlannerTaskPopup(task, true)
     }
   }},
   { label: 'Delete', command: (event) => {
     // print(focusedTask.value)
-    let {task} = event.item.data
+    let task = event.item.data
     if (task.type == "planner") {
       PlannerTasks.delete(task._id)
     }
@@ -61,15 +62,15 @@ export const task_items: MenuItem[] = [
 //// Generic Schedule Context Menu ////
 export const schedule_items: MenuItem[] = [
   { label: 'Edit', command: (event) => {
-    let {schedule} = event.item.data
+    let schedule = event.item.data
     openSchedulePopup(schedule)
   }},
   { label: 'Clone', command: (event) => {
-    let {schedule} = event.item.data
+    let schedule = event.item.data
       openSchedulePopup(schedule, true)
   }},
   { label: 'Delete', command: (event) => {
-    let {schedule} = event.item.data
+    let schedule = event.item.data
     Schedules.delete(schedule._id)
   }},
 ]
@@ -77,15 +78,31 @@ export const schedule_items: MenuItem[] = [
 //// Generic Project Context Menu ////
 export const project_items: MenuItem[] = [
   { label: 'Edit', command: (event) => {
-    let {project} = event.item.data
+    let project = event.item.data
     openProjectPopup(project)
   }},
   { label: 'Clone', command: (event) => {
-    let {project} = event.item.data
+    let project = event.item.data
       openProjectPopup(project, true)
   }},
   { label: 'Delete', command: (event) => {
-    let {project} = event.item.data
+    let project = event.item.data
     Projects.delete(project._id)
+  }},
+]
+
+//// Generic Focus Session Context Menu ////
+export const focus_session_items: MenuItem[] = [
+  { label: 'Edit', command: (event) => {
+    let focus_session = event.item.data
+    openFocusSessionPopup(focus_session)
+  }},
+  { label: 'Clone', command: (event) => {
+    let focus_session = event.item.data
+    openFocusSessionPopup(focus_session, true)
+  }},
+  { label: 'Delete', command: (event) => {
+    let focus_session = event.item.data
+    FocusSessions.delete(focus_session._id)
   }},
 ]

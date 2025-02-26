@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Project } from 'bolta-tasks-core';
+import { openContextMenu, project_items } from '../contextmenu';
 
 const props = defineProps<{
     project: Project
@@ -7,7 +8,7 @@ const props = defineProps<{
 </script>
 
 <template>
-<div class="project-button" @click="console.log(`wow!`)">
+<div class="project-button" @contextmenu="event => {openContextMenu(event, project_items, project, project.title)}" @click="console.log(`wow!`)">
   <p class="project-header">{{ props.project.title }}</p>
 </div>
 </template>

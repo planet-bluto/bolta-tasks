@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import FocusProject from '../FocusProject.vue';
-import { Projects } from '../../api';
+import { FocusSessions, Projects } from '../../api';
 import { CalendarDate_fromDate, Project } from 'bolta-tasks-core';
+import { openFocusSessionPopup } from '../../popups/new_focus_session';
+import FocusFocusSession from '../FocusFocusSession.vue';
 
 const assignedProjects = computed(() => {
   return Projects.value.filter((project: Project) => project.isOnDate(CalendarDate_fromDate(new Date())))
@@ -16,7 +18,7 @@ const unassignedProjects = computed(() => {
 <div id="focus-sessions-view">
   <div id="header-area">
     <div id="header-left-area">
-      <button id="new-taskless-button">+ Taskless Focus Session</button>
+      <button id="new-taskless-button" @click="event => {openFocusSessionPopup()}">+ Taskless Focus Session</button>
     </div>
     <div id="header-right-area">
       <p id="header-right-text">🕗 Previous Sessions</p>
@@ -32,7 +34,9 @@ const unassignedProjects = computed(() => {
         <FocusProject v-for="project in unassignedProjects" :project="project" />
       </div>
     </div>
-    <div id="main-right-area"></div>
+    <div class="flexer" id="main-right-area">
+      <FocusFocusSession v-for="focus_session in FocusSessions.value" :focus_session="focus_session" />
+    </div>
   </div>
 </div>
 </template>

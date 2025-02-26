@@ -5,6 +5,7 @@ declare global {
         awaitForEach(func: Function): Promise<T>;
         asyncForEach(func: Function): Promise<T>;
         remove(index: number): any;
+        move(from: number, to: number): void;
         pat(entry: any): void;
         remove_duplicates(): Array<T>;
     }

@@ -12,25 +12,30 @@ import Popups from "./components/Popups.vue"
 
 import {Router, Views} from "./router"
 import { CalendarDate_fromDate } from "bolta-tasks-core"
-import { computed, ref } from "vue"
+import { computed, onMounted, Ref, ref, useTemplateRef } from "vue"
 import { isMobile } from "./persist"
+import { MenuItem } from "primevue/menuitem"
+import { ContextMenu } from "primevue"
+import { openContextMenu, menu, current_items, items_base } from "./contextmenu"
 
 Router.switch_to_date(CalendarDate_fromDate(new Date()))
 
-const elem = ref()
+const this_menu = useTemplateRef("menu")
 
-// const zoom = computed(() => {
-//   let isMobile = (elem.value.getAttribute("mobile") == "true")
-//   return (isMobile ? 0.4 : 1.0) // please?
-// })
+onMounted(() => {
+  let res = this_menu.value
+  print("This Menu: ", res)
+  menu.value = res
+})
 </script>
 
 <template>
-  <div id="inner-app" ref="ref" :mobile="isMobile">
+  <ContextMenu ref="menu" :model="current_items" />
+  <div id="inner-app" :mobile="isMobile">
     <Popups></Popups>
     <Sidebar id="sidebar" :mobile="isMobile"></Sidebar>
 
-    <div id="right" :mobile="isMobile">
+    <div @contextmenu="event => {openContextMenu(event, items_base, {pingle: 'so true'}, 'Mao!')}" id="right" :mobile="isMobile">
       <Header></Header>
 
       <div id="main">

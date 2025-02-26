@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { provide, computed, ComputedRef, Component, Ref, ref } from "vue";
+import { computed, ComputedRef, Ref, ref } from "vue";
 import { PlannerTask, Task } from "bolta-tasks-core";
 import ListTask from "../ListTask.vue"
 import { FocusedDate, TaskListFilters } from "../../persist";
 import { PlannerTasks } from "../../api";
 import { HOUR, MINUTE } from "../../time";
 import { CleanTaskStatuses, TaskStates, TaskStatus, TaskStatuses } from "bolta-tasks-core";
-import { openPlannerTaskPopup } from "../../popups/new_task";
+import { openContextMenu, task_items } from "../../contextmenu";
 
 // let tasks = ref([]);
 
@@ -46,51 +46,11 @@ const TaskListTasks: ComputedRef<Task[]> = computed(() => {
 
   return returnTasks
 })
-
-const focusedListTask: Ref<null | HTMLDivElement> = ref(null)
-provide('focusedListTask', focusedListTask)
-
-const focusedTask: Ref<null | Task> = ref(null)
-
-import ContextMenu from 'primevue/contextmenu';
-import { MenuItem } from "primevue/menuitem";
-
-const menu = ref();
-
-const items_base: MenuItem[] = [
-    { label: 'Edit', command: () => {
-      let task = (focusedTask.value as PlannerTask)
-      if (task.type == "planner") {
-        openPlannerTaskPopup(task)
-      }
-    }},
-    { label: 'Clone', command: () => {
-      let task = (focusedTask.value as PlannerTask)
-      if (task.type == "planner") {
-        openPlannerTaskPopup(task, true)
-      }
-    }},
-    { label: 'Delete', command: () => {
-      // print(focusedTask.value)
-      let task = (focusedTask.value as PlannerTask)
-      if (task.type == "planner") {
-        PlannerTasks.delete(task._id)
-      }
-    }},
-]
-const items: Ref<MenuItem[]> = ref(items_base);
-function openTaskContextMenu(event: MouseEvent, task: Task) {
-  // print(menu)
-  print("FUCK YOU", menu.value)
-  focusedTask.value = task
-  menu.value.show(event)
-}
 </script>
 
 <template>
 <TransitionGroup class="task-list" name="list" tag="div">
-  <ContextMenu ref="menu" :model="items" />
-  <ListTask v-for="(task) in TaskListTasks" :task="task" :key="task._id" @contextmenu="event => openTaskContextMenu(event, task)"></ListTask>
+  <ListTask v-for="(task) in TaskListTasks" :task="task" :key="task._id" @contextmenu="event => openContextMenu(event, task_items, {task}, task.title)"></ListTask>
 </TransitionGroup>
 </template>
 

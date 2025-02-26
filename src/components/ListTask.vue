@@ -10,11 +10,11 @@ import moment from 'moment';
 import ListTaskBean from './ListTaskBean.vue';
 // import ReminderBean from './ReminderBean.vue';
 import { parseDurationString } from '../time';
-import { Component, computed, inject, Ref, ref, Transition } from 'vue';
+import { computed, ComputedRef } from 'vue';
 import { CalendarDate_toString, CleanTaskStatuses, TaskStatus, TaskStatuses } from 'bolta-tasks-core';
+import { MenuItem } from 'primevue/menuitem';
 // import { computed } from 'vue';
-
-const focusedListTask = (inject('focusedListTask', null) as Ref<null | HTMLDivElement>)
+import { openContextMenu } from '../contextmenu';
 
 const props = defineProps<{
     task: Task;
@@ -68,55 +68,27 @@ async function toggleCompleted(e: MouseEvent) {
   print("Task status updated...")
 }
 
-async function setTaskStatus(e: MouseEvent, status_key: string) {
-  print(status_key, e)
-  let status: TaskStatus = (CleanTaskStatuses[status_key] as TaskStatus)
+const items_base: ComputedRef<MenuItem[]> = computed(() => {
+  return Object.keys(CleanTaskStatuses).map((status_key: string) => {
+    return { label: status_key, command: async () => {
+      let status: TaskStatus = (CleanTaskStatuses[status_key] as TaskStatus)
 
-  e.preventDefault()
-  let {task} = props
-  let cloned_status = JSON.parse(JSON.stringify(task.status || {}))
-  cloned_status[CalendarDate_toString(FocusedDate.value)] = status
-
-  focusedListTask.value = null
-
-  await PlannerTasks.edit(task._id, {status: cloned_status})
-
-  print("Task status updated...")
-}
-
-const thisElem: Ref<HTMLDivElement> = ref()
-const contextMenuOpened = computed(() => focusedListTask.value == thisElem.value)
-
-function stopPropagation(e: MouseEvent) {
-  e.preventDefault()
-  e.stopPropagation()
-}
-
-function statusContext(e: MouseEvent) {
-  e.preventDefault()
-  e.stopPropagation()
-  console.log(`'${props.task.title}' should open the status context...`)
-  // contextMenuOpened.value = true
-  focusedListTask.value = thisElem.value
-}
-
-function closeStatusContext() {
-  focusedListTask.value = null
-}
+      let cloned_status = JSON.parse(JSON.stringify(props.task.status || {}))
+      cloned_status[CalendarDate_toString(FocusedDate.value)] = status
+      
+      await PlannerTasks.edit(props.task._id, {status: cloned_status})
+    }}
+  })
+})
 </script>
 
 <template>
-<div ref="thisElem" class="list-task" :context="contextMenuOpened">
+<div class="list-task">
   <div class="list-task-state-indicator-container">
     <div class="list-task-state-indicator" :state="getState"></div>
   </div>
   <div class="list-task-left">
-    <div @click="toggleCompleted" @contextmenu="statusContext" class="list-task-status" :status="getStatus">
-          <div v-if="contextMenuOpened" class="list-task-status-context-fade" @click="e => {stopPropagation(e); closeStatusContext()}"></div>
-          <div v-if="contextMenuOpened" class="list-task-status-context" @click="stopPropagation">
-            <button v-for="status in Object.keys(CleanTaskStatuses)" @click="e => {stopPropagation(e); setTaskStatus(e, status)}">{{ status }}</button>
-          </div>
-    </div>
+    <div @click="toggleCompleted" @contextmenu="event => {openContextMenu(event, items_base, null, `Update '${props.task.title}'`)}" class="list-task-status" :status="getStatus"></div>
   </div>
   <div class="list-task-right">
     <div class="list-task-right-top">
@@ -149,10 +121,6 @@ function closeStatusContext() {
 
 .list-task:hover {
   opacity: 1;
-}
-
-.list-task[context=true] {
-  opacity: 1.0;
 }
 
 .list-task-right {

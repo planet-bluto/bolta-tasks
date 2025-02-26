@@ -46,7 +46,7 @@ function SchedulesSelectPopupInput() {
     let options = {}
 
     Schedules.value.forEach(schedule => {
-        options[schedule.title] = schedule._id
+        options[`${schedule.title} (#${schedule._id})`] = schedule._id
     })
 
     return (new SelectPopupInput(_, "schedule", options, Object.keys(options).length-1))

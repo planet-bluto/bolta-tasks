@@ -7,48 +7,9 @@ import { currMonth, currYear, sidebarOpened, isMobile } from '../persist';
 
 import {Router, Views} from "../router"
 import { openSchedulePopup } from '../popups/new_schedule';
-import { provide, Ref, ref } from 'vue';
 import { Projects, Schedules } from '../api';
-import { Project, Schedule } from 'bolta-tasks-core';
 import { openProjectPopup } from '../popups/new_project';
-import { MenuItem } from 'primevue/menuitem';
-
-const focusedChild: Ref<any | null> = ref(null)
-provide('focusedChild', focusedChild)
-
-//// Project Context Menu ////
-const project_items_base: MenuItem[] = [
-    { label: 'Edit', command: () => {
-      let project = (focusedChild.value as Project)
-      openProjectPopup(project)
-    }},
-    { label: 'Clone', command: () => {
-        let project = (focusedChild.value as Project)
-        openProjectPopup(project, true)
-    }},
-    { label: 'Delete', command: () => {
-      let project = (focusedChild.value as Project)
-      Projects.delete(project._id)
-    }},
-]
-const project_items: Ref<MenuItem[]> = ref(project_items_base);
-
-//// Schedule Context Menu ////
-const schedule_items_base: MenuItem[] = [
-    { label: 'Edit', command: () => {
-      let schedule = (focusedChild.value as Schedule)
-      openSchedulePopup(schedule)
-    }},
-    { label: 'Clone', command: () => {
-        let schedule = (focusedChild.value as Schedule)
-        openSchedulePopup(schedule, true)
-    }},
-    { label: 'Delete', command: () => {
-        let schedule = (focusedChild.value as Schedule)
-      Schedules.delete(schedule._id)
-    }},
-]
-const schedule_items: Ref<MenuItem[]> = ref(schedule_items_base);
+import { project_items, schedule_items } from '../contextmenu';
 
 </script>
 

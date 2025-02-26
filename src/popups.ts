@@ -917,6 +917,8 @@ export class MultiPopupInput extends PopupInput {
         
         let input_elem = this_input.compile()
 
+
+        //// Buttons ////        
         let subtract_button = document.createElement("button")
         subtract_button.textContent = "X"
         subtract_button.classList.add("popup-input-card-remove")
@@ -930,6 +932,37 @@ export class MultiPopupInput extends PopupInput {
         })
 
         input_container.appendChild(subtract_button)
+
+        let move_up_button = document.createElement("button")
+        move_up_button.textContent = "<"
+        move_up_button.classList.add("popup-input-card-neutral")
+
+        move_up_button.addEventListener("click", (e: MouseEvent) => {
+            let index = this.active_inputs.indexOf(this_input)
+
+            this.active_inputs.move(index, index - 1)
+            this.type_pointer.move(index, index - 1)
+            this.inputs_container.insertBefore(this.inputs_container.children[index], this.inputs_container.children[index - 1])
+            // input_container.remove()
+        })
+
+        input_container.appendChild(move_up_button)
+
+        let move_down_button = document.createElement("button")
+        move_down_button.textContent = ">"
+        move_down_button.classList.add("popup-input-card-neutral")
+
+        move_up_button.addEventListener("click", (e: MouseEvent) => {
+            let index = this.active_inputs.indexOf(this_input)
+
+            this.active_inputs.move(index, index + 1)
+            this.type_pointer.move(index, index + 1)
+            this.inputs_container.insertBefore(this.inputs_container.children[index], this.inputs_container.children[index + 1])
+            // input_container.remove()
+        })
+
+        input_container.appendChild(move_down_button)
+
         input_container.appendChild(input_elem)
 
         this.inputs_container.appendChild(input_container)

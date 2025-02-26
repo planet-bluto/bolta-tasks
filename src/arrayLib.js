@@ -67,3 +67,13 @@ Array.prototype.pat = function (entry) {
 Array.prototype.remove_duplicates = function () {
 	return this.filter((entry, ind) => this.indexOf(entry) == ind)
 }
+
+Array.prototype.move = function (from, to) {
+	if (to >= this.length) {
+			var k = to - this.length + 1;
+			while (k--) {
+				this.push(undefined);
+			}
+	}
+	this.splice(to, 0, this.splice(from, 1)[0]);
+};

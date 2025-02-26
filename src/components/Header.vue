@@ -10,8 +10,7 @@ import { openPlannerTaskPopup } from "../popups/new_task";
 import { openSchedulePopup } from "../popups/new_schedule";
 import { ContextMenu } from "primevue";
 import { openProjectPopup } from "../popups/new_project";
-
-const menu = ref();
+import { openContextMenu } from "../contextmenu";
 
 const items_base: MenuItem[] = [
     { label: 'New PlannerTask', command: () => {
@@ -24,21 +23,14 @@ const items_base: MenuItem[] = [
         openSchedulePopup()
     }},
 ]
-const items: Ref<MenuItem[]> = ref(items_base);
-
-function openContextMenu(event: MouseEvent) {
-    // print("FUCK YOU", menu.value)
-    menu.value.show(event)
-}
 </script>
 
 <template>
-<ContextMenu ref="menu" :model="items" />
 <div id="header">
     <button id="sidebar-button" v-if="isMobile" @click="sidebarOpened = true">></button>
     <p id="header-text">{{ Router.header }}</p>
     <div id="header-buttons">
-        <HeaderButton id="add" icon="add" :func="Router.addButtonFunc.value" @contextmenu="event => openContextMenu(event)"/>
+        <HeaderButton id="add" icon="add" :func="Router.addButtonFunc.value" @contextmenu="event => {openContextMenu(event, items_base, null, 'New Thing!')}"/>
         <HeaderButton id="notification" icon="notification" :func="() => {console.log(`Opening Notifications!`)}"/>
         <HeaderButton id="settings" icon="settings" :func="() => {console.log(`Opening Settings!`)}"/>
     </div>

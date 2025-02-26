@@ -4,6 +4,7 @@ import { PlannerTask, ProjectTask, Schedule, Project } from "bolta-tasks-core";
 import EventEmitter from "eventemitter3";
 
 import { Interfacer } from "bolta-tasks-core"
+import { FocusSession } from "bolta-tasks-core";
 
 export const API_ENDPOINT = "https://bolta.planet-bluto.net"
 // export const API_ENDPOINT = "http://192.168.1.237:26582"
@@ -99,6 +100,7 @@ export const PlannerTasks = new APIDatabase("planner_tasks", PlannerTask)
 export const ProjectTasks = new APIDatabase("project_tasks", ProjectTask)
 export const Schedules = new APIDatabase("schedules", Schedule)
 export const Projects = new APIDatabase("projects", Project)
+export const FocusSessions = new APIDatabase("focus_sessions", FocusSession)
 
 export function API_Refresh() {
   PlannerTasks._refresh()

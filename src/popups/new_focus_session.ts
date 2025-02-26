@@ -38,8 +38,8 @@ function ProjectsSelectPopupInput() {
     return (new SelectPopupInput(_, "project", options, Object.keys(options).length-1))
 }
 
-export const NewFocusSessionPopup = () => [
-    [new HeaderPopupElement("New Focus Session")],
+export const NewFocusSessionPopup = (context: "New" | "Edit" | "Clone" = "New") => [
+    [new HeaderPopupElement(context + " Focus Session")],
     [new TextPopupInput("Title", "title")],
     [ProjectsSelectPopupInput()],
     [new MultiPopupInput("Interval", "interval", [], () => ({
@@ -58,7 +58,7 @@ export const NewFocusSessionPopup = () => [
 
 export function openFocusSessionPopup(focus_session: FocusSession = null, newAnyway = false) {
   let input_focus_session = focus_session
-  let {html_elems, inputs} = PopupDriver.open(NewFocusSessionPopup(), input_focus_session, async (data: FocusSessionStatic) => {
+  let {html_elems, inputs} = PopupDriver.open(NewFocusSessionPopup((newAnyway ? "Clone" : (focus_session?._id != null ? "Edit" : "New"))), input_focus_session, async (data: FocusSessionStatic) => {
     // let new_schedule = new Schedule(data)
     if (newAnyway) {
       delete input_focus_session["_id"]

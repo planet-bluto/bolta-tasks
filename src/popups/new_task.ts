@@ -52,8 +52,8 @@ function SchedulesSelectPopupInput() {
     return (new SelectPopupInput(_, "schedule", options, Object.keys(options).length-1))
 }
 
-export const NewTaskPopup = () => [
-    [new HeaderPopupElement("New Task")],
+export const NewTaskPopup = (context: "New" | "Edit" | "Clone" = "New") => [
+    [new HeaderPopupElement(context + " Task")],
     [new TextPopupInput("Title", "title")],
     [new ClockTimePopupInput("Start Time", "time_start"), new DurationPopupInput("Task Duration", "duration"), new ClockTimePopupInput("Due Time", "time_due")],
     [new MultiPopupInput("Rules", "rules", [], () => ({
@@ -165,7 +165,7 @@ export async function openPlannerTaskPopup(task: PlannerTask | null = null, newA
     //     print("THEMS THE RULES: ", input_task.rules)
     // }
 
-    let {html_elems, inputs} = PopupDriver.open(NewTaskPopup(), input_task, async (data: PlannerTaskStatic) => {
+    let {html_elems, inputs} = PopupDriver.open(NewTaskPopup((newAnyway ? "Clone" : (task?._id != null ? "Edit" : "New"))), input_task, async (data: PlannerTaskStatic) => {
         // if (!newAnyway) {
         //     cache_reminders.forEach(reminder => {
         //         Reminders.deleteEntry(reminder.id)

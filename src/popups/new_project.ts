@@ -26,8 +26,8 @@ function instanceRuleMake(elements: any[]) {
     return (() => elements)
 }
 
-export const NewProjectPopup = () => [
-    [new HeaderPopupElement("New Project")],
+export const NewProjectPopup = (context: "New" | "Edit" | "Clone" = "New") => [
+    [new HeaderPopupElement(context + " Project")],
     [new TextPopupInput("Title", "title")],
     [new MultiPopupInput("Rules", "rules", [], () => ({
         [InstanceRuleType.SINGLE]: {label: "Once", input: () => new CardPopupInput(_, _, _, instanceRuleMake([
@@ -66,7 +66,7 @@ export const NewProjectPopup = () => [
 
 export function openProjectPopup(project: Project = null, newAnyway = false) {
   let input_project = project
-  let {html_elems, inputs} = PopupDriver.open(NewProjectPopup(), input_project, async (data: ProjectStatic) => {
+  let {html_elems, inputs} = PopupDriver.open(NewProjectPopup((newAnyway ? "Clone" : (project?._id != null ? "Edit" : "New"))), input_project, async (data: ProjectStatic) => {
     // let new_schedule = new Schedule(data)
     if (newAnyway) {
       delete input_project["_id"]

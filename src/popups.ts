@@ -940,9 +940,15 @@ export class MultiPopupInput extends PopupInput {
         move_up_button.addEventListener("click", (e: MouseEvent) => {
             let index = this.active_inputs.indexOf(this_input)
 
-            this.active_inputs.move(index, index - 1)
-            this.type_pointer.move(index, index - 1)
-            this.inputs_container.insertBefore(this.inputs_container.children[index], this.inputs_container.children[index - 1])
+            if (index != 0) {
+                this.active_inputs.move(index, index - 1)
+                this.type_pointer.move(index, index - 1)
+                this.inputs_container.insertBefore(this.inputs_container.children[index], this.inputs_container.children[index - 1])
+            } else {
+                this.active_inputs.move(index, this.active_inputs.length-1)
+                this.type_pointer.move(index, this.type_pointer.length-1)
+                this.inputs_container.appendChild(this.inputs_container.children[index])
+            }
             // input_container.remove()
         })
 
@@ -952,12 +958,18 @@ export class MultiPopupInput extends PopupInput {
         move_down_button.textContent = ">"
         move_down_button.classList.add("popup-input-card-neutral")
 
-        move_up_button.addEventListener("click", (e: MouseEvent) => {
+        move_down_button.addEventListener("click", (e: MouseEvent) => {
             let index = this.active_inputs.indexOf(this_input)
 
-            this.active_inputs.move(index, index + 1)
-            this.type_pointer.move(index, index + 1)
-            this.inputs_container.insertBefore(this.inputs_container.children[index], this.inputs_container.children[index + 1])
+            if (index != this.inputs_container.children.length-1) {
+                this.active_inputs.move(index, index + 1)
+                this.type_pointer.move(index, index + 1)
+                this.inputs_container.insertBefore(this.inputs_container.children[index], this.inputs_container.children[index + 2])
+            } else {
+                this.active_inputs.move(index, 0)
+                this.type_pointer.move(index, 0)
+                this.inputs_container.insertBefore(this.inputs_container.children[index], this.inputs_container.children[0])
+            }
             // input_container.remove()
         })
 

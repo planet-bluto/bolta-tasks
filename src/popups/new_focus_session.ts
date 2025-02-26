@@ -23,19 +23,14 @@ const MonthSelectPopupTemplate = {
     "December": 11,
 }
 
-function instanceRuleMake(elements: any[]) {
-    elements.push([new CheckboxPopupInput("Invert Rule", "inverse", false)])
-    return (() => elements)
-}
-
 function ProjectsSelectPopupInput() {
-    let options = {}
+    let options = {"None": null}
 
     Projects.value.forEach(project => {
         options[`${project.title} (#${project._id})`] = project._id
     })
 
-    return (new SelectPopupInput(_, "project", options, Object.keys(options).length-1))
+    return (new SelectPopupInput(_, "project", options, 0))
 }
 
 export const NewFocusSessionPopup = (context: "New" | "Edit" | "Clone" = "New") => [
@@ -43,11 +38,11 @@ export const NewFocusSessionPopup = (context: "New" | "Edit" | "Clone" = "New") 
     [new TextPopupInput("Title", "title")],
     [ProjectsSelectPopupInput()],
     [new MultiPopupInput("Interval", "interval", [], () => ({
-        [FocusTimerSegmentType.ACTIVE]: {label: "Active", input: () => new CardPopupInput(_, _, _, instanceRuleMake([
+        [FocusTimerSegmentType.ACTIVE]: {label: "Active", input: () => new CardPopupInput(_, _, _, (() => [
             [new HeaderPopupElement("Active")],
             [new DurationPopupInput("Duration", "duration")],
         ]))},
-        [FocusTimerSegmentType.BREAK]: {label: "Break", input: () => new CardPopupInput(_, _, _, instanceRuleMake([
+        [FocusTimerSegmentType.BREAK]: {label: "Break", input: () => new CardPopupInput(_, _, _, (() => [
             [new HeaderPopupElement("Break")],
             [new DurationPopupInput("Duration", "duration")],
         ]))},

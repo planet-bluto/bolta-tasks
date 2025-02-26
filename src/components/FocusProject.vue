@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Project } from 'bolta-tasks-core';
 import { openContextMenu, project_items } from '../contextmenu';
+import { openFocusSessionPopup } from '../popups/new_focus_session';
 
 const props = defineProps<{
     project: Project
@@ -8,7 +9,13 @@ const props = defineProps<{
 </script>
 
 <template>
-<div class="project-button" @contextmenu="event => {openContextMenu(event, project_items, project, project.title)}" @click="console.log(`wow!`)">
+<div class="project-button" @contextmenu="event => {openContextMenu(event, project_items, project, project.title)}" @click="openFocusSessionPopup({
+    title: `${project.title} Session`,
+    project: project._id,
+    time_limit: 14400000,
+    interval: [],
+    include_breaks: false
+})">
   <p class="project-header">{{ props.project.title }}</p>
 </div>
 </template>

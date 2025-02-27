@@ -4,8 +4,11 @@ import { openSchedulePopup } from "./popups/new_schedule";
 import Schedules from "./components/views/Schedules.vue";
 import { FocusSessions, PlannerTasks, Projects } from "./api";
 import { openProjectPopup } from "./popups/new_project";
-import { openPlannerTaskPopup } from "./popups/new_task";
+import { openPlannerTaskPopup } from "./popups/new_planner_task";
 import { openFocusSessionPopup } from "./popups/new_focus_session";
+import { openProjectTaskPopup } from "./popups/new_project_task";
+import { SubAPI } from "./sub_api";
+import { ProjectTask } from "bolta-tasks-core";
 
 export const menu = ref();
 export const items_base: MenuItem[] = [
@@ -88,6 +91,23 @@ export const project_items: MenuItem[] = [
   { label: 'Delete', command: (event) => {
     let project = event.item.data
     Projects.delete(project._id)
+  }},
+]
+
+//// Generic Project Task Context Menu ////
+export const project_task_items: MenuItem[] = [
+  { label: 'Edit', command: (event) => {
+    let task = event.item.data
+    openProjectTaskPopup(task)
+  }},
+  { label: 'Clone', command: (event) => {
+    let task = event.item.data
+    openProjectTaskPopup(task, true)
+  }},
+  { label: 'Delete', command: (event) => {
+    let task: ProjectTask = event.item.data
+    new SubAPI("projects", task.project_id, "tasks").remove(task._index)
+    // Projects.delete(project._id)
   }},
 ]
 

@@ -5,9 +5,10 @@ import EventEmitter from "eventemitter3";
 
 import { Interfacer } from "bolta-tasks-core"
 import { FocusSession } from "bolta-tasks-core";
+import { FocusedProject } from "./persist";
 
-export const API_ENDPOINT = "https://bolta.planet-bluto.net"
-// export const API_ENDPOINT = "http://192.168.1.237:26582"
+// export const API_ENDPOINT = "https://bolta.planet-bluto.net"
+export const API_ENDPOINT = "http://192.168.1.237:26582"
 
 class FetchedEventClass extends EventEmitter {}
 export const FetchedEvent = new FetchedEventClass()
@@ -42,22 +43,21 @@ class APIDatabase {
     })
   }
 
-  _refresh() {
+  async _refresh() {
     print("REFRESHING DATABASE...")
-    this.get_all(true).then(objs => {
-      this.ref.value = objs
-      print(`DATABASE [${this.db_key}]: `, this.ref.value)
-      fetched.value.add(this.db_key)
+    let objs = await this.get_all(true)
+    this.ref.value = objs
+    print(`DATABASE [${this.db_key}]: `, this.ref.value)
+    fetched.value.add(this.db_key)
 
-      if (this.db_key == "schedules") {
-        print("Setting Interfacer: ", Interfacer)
-        Interfacer["resolveSchedule"] = (schedule_id: string) => this.findEntry(schedule_id)
-      }
+    if (this.db_key == "schedules") {
+      print("Setting Interfacer: ", Interfacer)
+      Interfacer["resolveSchedule"] = (schedule_id: string) => this.findEntry(schedule_id)
+    }
 
-      if (to_fetch.every(key => fetched.value.has(key))) {
-        FetchedEvent.emit("fetched")
-      }
-    })
+    if (to_fetch.every(key => fetched.value.has(key))) {
+      FetchedEvent.emit("fetched")
+    }
   }
 
   get value() {
@@ -97,12 +97,21 @@ class APIDatabase {
 }
 
 export const PlannerTasks = new APIDatabase("planner_tasks", PlannerTask)
-export const ProjectTasks = new APIDatabase("project_tasks", ProjectTask)
+// export const ProjectTasks = new APIDatabase("project_tasks", ProjectTask)
 export const Schedules = new APIDatabase("schedules", Schedule)
 export const Projects = new APIDatabase("projects", Project)
 export const FocusSessions = new APIDatabase("focus_sessions", FocusSession)
 
-export function API_Refresh() {
-  PlannerTasks._refresh()
-  Schedules._refresh()
+export async function API_Refresh() {
+  await Promise.all([
+    PlannerTasks._refresh(),
+    Schedules._refresh(),
+    Projects._refresh(),
+    FocusSessions._refresh(),
+  ])
+  
+  print("Refreshing Focused Project ", FocusedProject.value)
+  if (FocusedProject.value != null) {
+    FocusedProject.value = Projects.findEntry(FocusedProject.value._id)
+  }
 }

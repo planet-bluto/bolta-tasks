@@ -17,7 +17,7 @@ import { MenuItem } from 'primevue/menuitem';
 import { openContextMenu } from '../contextmenu';
 
 const props = defineProps<{
-    task: Task;
+    task: PlannerTask;
 }>()
 
 

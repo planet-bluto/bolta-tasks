@@ -13,5 +13,17 @@
 
     <!-- <script type="text/javascript" src="./cordova.js"></script> -->
     <script type="module" src="./src/main.ts"></script>
+    <script>
+      twemoji.base = "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/"
+      
+      let observer = new MutationObserver(() => {
+        twemoji.parse(document.body)
+      })
+
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true
+      })
+    </script>
   </body>
 </html>

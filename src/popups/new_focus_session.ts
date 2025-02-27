@@ -40,10 +40,12 @@ export const NewFocusSessionPopup = (context: "New" | "Edit" | "Clone" = "New") 
     [new MultiPopupInput("Interval", "interval", [], () => ({
         [FocusTimerSegmentType.ACTIVE]: {label: "Active", input: () => new CardPopupInput(_, _, _, (() => [
             [new HeaderPopupElement("Active")],
+            [new TextPopupInput("Label", "label", "Active")],
             [new DurationPopupInput("Duration", "duration")],
         ]))},
         [FocusTimerSegmentType.BREAK]: {label: "Break", input: () => new CardPopupInput(_, _, _, (() => [
             [new HeaderPopupElement("Break")],
+            [new TextPopupInput("Label", "label", "Break")],
             [new DurationPopupInput("Duration", "duration")],
         ]))},
     }))],

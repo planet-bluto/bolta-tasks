@@ -631,6 +631,7 @@ export class DateTimePopupInput extends PopupInput {
     }
 
     set(thisValue: number) {
+        print("SETTING DATE TIME: ", new Date(thisValue).toDateTimeLocal())
         if (this.elem) { this.elem.value = new Date(thisValue).toDateTimeLocal() }
     }
 }

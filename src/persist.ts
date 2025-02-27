@@ -2,7 +2,7 @@
 
 import {computed, Ref, ref, WritableComputedRef} from 'vue'
 // import { Task, PlannerTaskStatic, PlannerTask, ProjectTask } from './models/task';
-import { CalendarDate } from 'bolta-tasks-core'
+import { CalendarDate, Project } from 'bolta-tasks-core'
 // import { Reminder } from './models/reminder'
 // import localforage from 'localforage'
 import moment from 'moment';
@@ -16,6 +16,7 @@ export const isMobile = ref(false)
 
 export var TaskListFilters: Ref<Function[]> = ref([])
 export var FocusedDate: Ref<CalendarDate | null> = ref(null)
+export var FocusedProject: Ref<Project | null> = ref(null)
 
 // var is_fetched = false
 

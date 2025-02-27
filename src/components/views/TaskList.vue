@@ -18,7 +18,7 @@ import { openContextMenu, task_items } from "../../contextmenu";
 
 // erm- fuck you copilot
 
-const TaskListTasks: ComputedRef<Task[]> = computed(() => {
+const TaskListTasks: ComputedRef<PlannerTask[]> = computed(() => {
   let returnTasks = PlannerTasks.value.filter(task => {
     return TaskListFilters.value.every(filter => filter(task))
   })

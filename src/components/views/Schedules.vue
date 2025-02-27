@@ -1,12 +1,8 @@
 <script setup lang="ts">
-import { Ref, ref } from 'vue';
 import { Schedule } from 'bolta-tasks-core';
 import { Schedules } from '../../api';
 import ListSchedule from '../ListSchedule.vue';
 
-import ContextMenu from 'primevue/contextmenu';
-import { MenuItem } from "primevue/menuitem";
-import { openSchedulePopup } from '../../popups/new_schedule';
 import { openContextMenu, schedule_items } from '../../contextmenu';
 
 </script>

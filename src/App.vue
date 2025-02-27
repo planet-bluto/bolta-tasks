@@ -3,6 +3,7 @@ import Header from "./components/Header.vue"
 import Sidebar from "./components/Sidebar.vue"
 
 import TaskListView from "./components/views/TaskList.vue"
+import ProjectView from "./components/views/Project.vue"
 import PlannerView from "./components/views/Planner.vue"
 import FocusTimerView from "./components/views/FocusTimer.vue"
 import FocusSessionsView from "./components/views/FocusSessions.vue"
@@ -41,6 +42,7 @@ onMounted(() => {
       <div id="main">
         <!-- Views -->
         <TaskListView v-show="Router.current.value == Views.TASKS"></TaskListView>
+        <ProjectView v-show="Router.current.value == Views.PROJECT_TASKS"></ProjectView>
         <PlannerView v-show="Router.current.value == Views.PLANNER"></PlannerView>
         <FocusTimerView v-show="Router.current.value == Views.TIMER"></FocusTimerView>
         <FocusSessionsView v-show="Router.current.value == Views.SESSIONS"></FocusSessionsView>

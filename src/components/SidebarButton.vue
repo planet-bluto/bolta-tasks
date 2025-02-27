@@ -10,6 +10,7 @@ import { openContextMenu } from '../contextmenu';
 const props = defineProps<{
     label: String,
     func: Function,
+    child_func?: Function,
     children?: any[],
     items?: MenuItem[]
 }>()
@@ -19,7 +20,7 @@ const props = defineProps<{
 <div class="sidebar-button" @click="props.func()">
 <p class="sidebar-header">{{ props.label }}</p>
 </div>
-<div class="sidebar-sub-button" v-for="(child) in children" @click="console.log(child)" @contextmenu="event => openContextMenu(event, items, child[1], child[0])">
+<div class="sidebar-sub-button" v-for="(child) in children" @click="console.log(child); child_func(child[1])" @contextmenu="event => openContextMenu(event, items, child[1], child[0])">
     <p class="sidebar-sub-header">{{ child[0] }}</p>
 </div>
 </template>

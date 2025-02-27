@@ -10,6 +10,8 @@ import { openSchedulePopup } from '../popups/new_schedule';
 import { Projects, Schedules } from '../api';
 import { openProjectPopup } from '../popups/new_project';
 import { project_items, schedule_items } from '../contextmenu';
+import { Project } from 'bolta-tasks-core';
+import { openFocusSessionPopup } from '../popups/new_focus_session';
 
 </script>
 
@@ -20,8 +22,8 @@ import { project_items, schedule_items } from '../contextmenu';
     <Calendar></Calendar>
     <!-- <SidebarButton label="TaskList" :func="() => { Router.switch(Views.TASKS, `TaskListView`) }" /> -->
     <!-- <SidebarButton label="Planner" :func="() => { Router.switch(Views.PLANNER, `Planner`) }" /> -->
-    <SidebarButton label="Focus" :func="() => { Router.switch(Views.SESSIONS, `Focus Sessions`) }" />
-    <SidebarButton label="Projects" :func="() => { Router.switch(Views.SESSIONS, `Projects`, openProjectPopup) }" :items="project_items" :children="Projects.value.map(project => [project.title, project])"/>
+    <SidebarButton label="Focus" :func="() => { Router.switch(Views.SESSIONS, `Focus Sessions`, openFocusSessionPopup) }" />
+    <SidebarButton label="Projects" :func="() => { Router.switch(Views.SESSIONS, `Projects`, openProjectPopup) }" :items="project_items" :children="Projects.value.map(project => [project.title, project])" :child_func="(project: Project) => {Router.switch_to_project(project)}"/>
     <SidebarButton label="Schedules" :func="() => { Router.switch(Views.SCHEDULES, `Schedules`, openSchedulePopup) }" :items="schedule_items" :children="Schedules.value.map(schedule => [schedule.title, schedule])" />
 </div>
 </template>

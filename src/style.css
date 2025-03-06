@@ -19,6 +19,34 @@
   src: url(./assets/fonts/Montserrat-ExtraBold.ttf);
 }
 
+@font-face {
+  font-family: 'Comfortaa';
+  font-style: normal;
+  font-weight: 500;
+  src: url(./assets/fonts/Comfortaa-Regular.ttf);
+}
+
+@font-face {
+  font-family: 'ComfortaaBold';
+  font-style: normal;
+  font-weight: 700;
+  src: url(./assets/fonts/Comfortaa-SemiBold.ttf);
+}
+
+@font-face {
+  font-family: 'ComfortaaExtraBold';
+  font-style: normal;
+  font-weight: 800;
+  src: url(./assets/fonts/Comfortaa-Bold.ttf);
+}
+
+@font-face {
+  font-family: 'MartianMono';
+  font-style: normal;
+  font-weight: 800;
+  src: url(assets/fonts/MartianMono-SemiBold.ttf);
+}
+
 img.emoji {
   height: 1em;
   width: 1em;

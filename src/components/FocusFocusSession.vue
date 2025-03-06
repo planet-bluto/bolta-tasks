@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { FocusSession } from 'bolta-tasks-core';
 import { focus_session_items, openContextMenu } from '../contextmenu';
+import { Router } from '../router';
 
 const props = defineProps<{
   focus_session: FocusSession
@@ -8,7 +9,7 @@ const props = defineProps<{
 </script>
 
 <template>
-<div class="focus-session-button" @contextmenu="event => {openContextMenu(event, focus_session_items, focus_session, focus_session.title)}" @click="console.log(`wow!`)">
+<div class="focus-session-button" @contextmenu="event => {openContextMenu(event, focus_session_items, focus_session, focus_session.title)}" @click="Router.switch_to_focus_session(focus_session)">
   <p class="focus-session-header">{{ props.focus_session.title }}</p>
 </div>
 </template>

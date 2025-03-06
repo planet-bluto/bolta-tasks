@@ -5,6 +5,7 @@ import { Project, ProjectStatic } from "bolta-tasks-core";
 import { FocusSessions, Projects } from "../api";
 import { FocusSessionStatic } from '../../../bolta-tasks-core/src/models/focus_session';
 import { FocusSession } from "bolta-tasks-core";
+import { MINUTE } from "../time";
 
 const _ = null // best
 
@@ -41,12 +42,12 @@ export const NewFocusSessionPopup = (context: "New" | "Edit" | "Clone" = "New") 
         [FocusTimerSegmentType.ACTIVE]: {label: "Active", input: () => new CardPopupInput(_, _, _, (() => [
             [new HeaderPopupElement("Active")],
             [new TextPopupInput("Label", "label", "Active")],
-            [new DurationPopupInput("Duration", "duration")],
+            [new DurationPopupInput("Duration", "duration", (30 * MINUTE), true)],
         ]))},
         [FocusTimerSegmentType.BREAK]: {label: "Break", input: () => new CardPopupInput(_, _, _, (() => [
             [new HeaderPopupElement("Break")],
             [new TextPopupInput("Label", "label", "Break")],
-            [new DurationPopupInput("Duration", "duration")],
+            [new DurationPopupInput("Duration", "duration", (5 * MINUTE), true)],
         ]))},
     }))],
     [new DurationPopupInput("Time Limit", "time_limit")],

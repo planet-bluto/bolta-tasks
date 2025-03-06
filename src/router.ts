@@ -1,11 +1,12 @@
 import {Ref, ref} from 'vue'
-import { CalendarDate, Project } from 'bolta-tasks-core'
-import { FocusedDate, FocusedProject, TaskListFilters } from './persist'
+import { CalendarDate, FocusSession, Project } from 'bolta-tasks-core'
+import { FocusedDate, FocusedProject, FocusedSession, TaskListFilters } from './persist'
 import { Task } from 'bolta-tasks-core'
 import moment from 'moment'
 import EventEmitter from 'eventemitter3';
 import { openPlannerTaskPopup } from './popups/new_planner_task'
 import { openProjectTaskPopup } from './popups/new_project_task'
+import { openFocusSessionPopup } from './popups/new_focus_session'
 
 export enum Views {
     TASKS,
@@ -51,7 +52,19 @@ class RouterClass extends EventEmitter {
             openProjectTaskPopup({project_id: project._id} as any)
         }
         FocusedProject.value = project
-        print("new project :) ", FocusedProject.value)
+        print("new project :) (agony)", FocusedProject.value)
+
+        this.emit("switch")
+    }
+
+    switch_to_focus_session(focus_session: FocusSession) {
+        this.current.value = Views.TIMER
+        this.header.value = focus_session.title
+        this.addButtonFunc.value = () => {
+            openFocusSessionPopup()
+        }
+        FocusedSession.value = focus_session
+        print("new project :) (agony)", FocusedSession.value)
 
         this.emit("switch")
     }

@@ -1,19 +1,14 @@
 <script setup lang="ts">
-import { PlannerTask, PlannerTaskDated, Task } from 'bolta-tasks-core';
+import { PlannerTask, PlannerTaskDated } from 'bolta-tasks-core';
 import { FocusedDate } from '../persist';
 import { PlannerTasks } from "../api";
-// import { PopupDriver } from '../popups';
-// import { PlannerTaskContextPopup } from '../popups/task_context';
 
 import moment from 'moment';
 
-import ListTaskBean from './ListTaskBean.vue';
-// import ReminderBean from './ReminderBean.vue';
-import { parseDurationString } from '../time';
+import { parseDuration } from '../time';
 import { computed, ComputedRef } from 'vue';
 import { CalendarDate_toString, CleanTaskStatuses, TaskStatus, TaskStatuses } from 'bolta-tasks-core';
 import { MenuItem } from 'primevue/menuitem';
-// import { computed } from 'vue';
 import { openContextMenu } from '../contextmenu';
 
 const props = defineProps<{
@@ -80,6 +75,10 @@ const items_base: ComputedRef<MenuItem[]> = computed(() => {
     }}
   })
 })
+
+const duration = computed(() => {
+  return parseDuration((props.task.onDate(FocusedDate.value) as PlannerTaskDated).duration)
+})
 </script>
 
 <template>
@@ -95,9 +94,10 @@ const items_base: ComputedRef<MenuItem[]> = computed(() => {
       <p class="list-task-title">{{ task.title }}</p>
     </div>
     <div class="list-task-right-bottom">
-      <ListTaskBean :text="`At: ${datedTaskMoment('time_start').format('h:mm A')}`"></ListTaskBean>
-      <ListTaskBean :text="`Due: ${datedTaskMoment('time_due').format('h:mm A')}`"></ListTaskBean>
-      <ListTaskBean :text="`About: ${parseDurationString((task.onDate(FocusedDate) as PlannerTaskDated).duration)}`"></ListTaskBean>
+      <p class="list-task-time-label">{{ `${datedTaskMoment('time_start').format('h:mm A')} - ${datedTaskMoment('time_due').format('h:mm A')} | ${duration.hours > 0 ? `${duration.hours}h ` : ""}${duration.minutes > 0 ? `${duration.minutes}m ` : ""}` }}</p>
+      <!-- <ListTaskBean :text="`At: ${datedTaskMoment('time_start').format('h:mm A')}`"></ListTaskBean> -->
+      <!-- <ListTaskBean :text="`Due: ${datedTaskMoment('time_due').format('h:mm A')}`"></ListTaskBean> -->
+      <!-- <ListTaskBean :text="`About: ${parseDurationString((task.onDate(FocusedDate) as PlannerTaskDated).duration)}`"></ListTaskBean> -->
     </div>
   </div>
 </div>
@@ -134,6 +134,16 @@ const items_base: ComputedRef<MenuItem[]> = computed(() => {
 .list-task-right-bottom {
   display: flex;
   gap: 8px;
+  flex-direction: column;
+  place-content: center;
+  height: 100%;
+}
+
+.list-task-time-label {
+  font-family: 'MontserratBold';
+  font-size: 26px;
+  color: var(--theme-text-2);
+  opacity: 0.25;
 }
 
 .list-task-left {
@@ -149,7 +159,7 @@ const items_base: ComputedRef<MenuItem[]> = computed(() => {
   width: calc(80% - 30px);
   height: calc(80% - 30px);
   background: var(--theme-back-3);
-  border-radius: 15px;
+  border-radius: 50%;
   border: 15px var(--theme-back-1) solid;
 }
 

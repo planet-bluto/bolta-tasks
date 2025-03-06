@@ -11,6 +11,7 @@ const props = defineProps<{
     label: String,
     func: Function,
     child_func?: Function,
+    childStateFunc?: Function,
     children?: any[],
     items?: MenuItem[]
 }>()
@@ -21,6 +22,9 @@ const props = defineProps<{
 <p class="sidebar-header">{{ props.label }}</p>
 </div>
 <div class="sidebar-sub-button" v-for="(child) in children" @click="console.log(child); child_func(child[1])" @contextmenu="event => openContextMenu(event, items, child[1], child[0])">
+    <div class="state-indicator-container">
+        <div class="state-indicator" :state="(childStateFunc ? childStateFunc(child[1]) : 'NONE')"></div>
+    </div>
     <p class="sidebar-sub-header">{{ child[0] }}</p>
 </div>
 </template>
@@ -66,5 +70,44 @@ const props = defineProps<{
     font-family: "MontserratBold";
     font-size: 20px;
     margin: 0px;
+}
+
+.state-indicator-container {
+  width: 0px;
+  height: 0px;
+}
+
+.state-indicator {
+  position: relative;
+  display: none;
+  width: 24px;
+  height: 24px;
+  top: -36px;
+  left: -36px;
+  border-radius: 50%;
+  background: var(--theme-back-3);
+  border: 12px var(--theme-back-1) solid;
+  scale: 0.5;
+}
+
+.state-indicator[state="TODO"] {
+  display: flex;
+  background: var(--theme-accent-1);
+  animation-name: pinging;
+  animation-duration: 750ms;
+  animation-iteration-count: infinite;
+  /* animation-timing-function: linear; */
+  animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1);
+  animation-direction: alternate;
+}
+.state-indicator[state="OVERDUE"] {
+  display: flex;
+  background: var(--theme-danger);
+  animation-name: pinging;
+  animation-duration: 250ms;
+  animation-iteration-count: infinite;
+  /* animation-timing-function: linear; */
+  animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1);
+  animation-direction: alternate;
 }
 </style>

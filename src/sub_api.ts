@@ -29,4 +29,6 @@ export class SubAPI {
   edit(index, value) { return this._base_request("PATCH", `/${this.db_key}/${this.doc_key}/edit`, {key: this.sub_key, index, value}) }
 
   remove(index) { return this._base_request("PATCH", `/${this.db_key}/${this.doc_key}/remove`, {key: this.sub_key, index}) }
+
+  move(from, to) { return this._base_request("PATCH", `/${this.db_key}/${this.doc_key}/move`, {key: this.sub_key, from, to}) }
 }

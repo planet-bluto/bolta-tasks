@@ -139,5 +139,9 @@ const unassignedProjects = computed(() => {
 
   width: 100%;
   height: 100%;
+
+  overflow-y: scroll;
+
+  padding-right: 20px;
 }
 </style>

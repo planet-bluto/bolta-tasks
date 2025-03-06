@@ -1,7 +1,7 @@
 import moment from 'moment'
 import {nextTick, Ref, ref} from 'vue'
 import { CalendarDate, CalendarDate_fromDate, CalendarDate_fromString, CalendarDate_toString, CalendarWeek, CalendarWeek_fromString, CalendarWeek_toString, ClockTime, ClockTime_fromDate, ClockTime_fromString, ClockTime_toString, Weekday } from 'bolta-tasks-core'
-import { HOUR, MINUTE, parseDuration } from './time'
+import { HOUR, MINUTE, parseDuration, SECOND } from './time'
 import { Snowflake } from '@sapphire/snowflake';
 import { deepAssign } from './deepAssign';
 const snowflake = new Snowflake(SNOWFLAKE_EPOCH);
@@ -790,10 +790,13 @@ export class WeekPopupInput extends PopupInput {
 export class DurationPopupInput extends PopupInput {
     hour_elem: HTMLInputElement | null = null
     minute_elem: HTMLInputElement | null = null
-    def: number = MINUTE * 30;
+    seconds_elem: HTMLInputElement | null = null
+    has_seconds: boolean;
 
-    constructor(label: string | null, key: string | null, def: number = MINUTE * 30) {
+    constructor(label: string | null, key: string | null, def: number = MINUTE * 30, has_seconds = false) {
         super(label, key, def)
+        // this.def = def
+        this.has_seconds = has_seconds
     }
 
     _compile(): HTMLElement {
@@ -812,7 +815,7 @@ export class DurationPopupInput extends PopupInput {
         input_container.classList.add("popup-input-duration-input-container")
 
 
-        let {hours, minutes} = parseDuration(this.def)
+        let {hours, minutes, seconds} = parseDuration(this.def)
 
         let hour_elem = document.createElement("input")
 
@@ -846,14 +849,35 @@ export class DurationPopupInput extends PopupInput {
         minute_elem.max = String(59)
         minute_elem.step = String(1)
 
+        let second_elem = document.createElement("input")
+
+        this.seconds_elem = second_elem
+
+        second_elem.classList.add("popup-input")
+        second_elem.classList.add("popup-number-input")
+
+        second_elem.type = "number"
+        if (this.def != null) {
+            second_elem.defaultValue = String(seconds)
+            second_elem.value = String(seconds)
+        }
+        second_elem.min = String(0)
+        second_elem.max = String(59)
+        second_elem.step = String(1)
+
         let input_container_divider = document.createElement("p")
         input_container_divider.textContent = ":"
+        let input_container_divider_2 = document.createElement("p")
+        input_container_divider_2.textContent = ":"
 
 
         input_container.appendChild(hour_elem)
         input_container.appendChild(input_container_divider)
         input_container.appendChild(minute_elem)
-
+        if (this.has_seconds) {
+            input_container.appendChild(input_container_divider_2)
+            input_container.appendChild(second_elem)
+        }
 
         container.appendChild(label)
         container.appendChild(input_container)
@@ -867,19 +891,21 @@ export class DurationPopupInput extends PopupInput {
         if (this.hour_elem && this.minute_elem) {
             let hours = (Number(this.hour_elem.value) * HOUR)
             let minutes = (Number(this.minute_elem.value) * MINUTE)
+            let seconds = (Number(this.seconds_elem.value) * SECOND)
 
-            to_return = hours + minutes
+            to_return = hours + minutes + seconds
         }
 
         return to_return
     }
 
     set(thisValue: number) {
-        let {hours, minutes} = parseDuration(thisValue)
+        let {hours, minutes, seconds} = parseDuration(thisValue)
 
         if (this.hour_elem && this.minute_elem) {
             this.hour_elem.value = String(hours)
             this.minute_elem.value = String(minutes)
+            this.seconds_elem.value = String(seconds)
         }
     }
 }

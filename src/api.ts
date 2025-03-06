@@ -16,6 +16,7 @@ export const FetchedEvent = new FetchedEventClass()
 const to_fetch = ["schedules", "planner_tasks"]
 var fetched = ref(new Set())
 
+export const API_DATABASES: Ref<{[db_key: string]: APIDatabase}> = ref({})
 class APIDatabase {
   host: string = API_ENDPOINT;
   _axios: AxiosInstance;
@@ -30,6 +31,8 @@ class APIDatabase {
     this._axios = axios.create({
       baseURL: this.host,
     })
+    
+    API_DATABASES.value[this.db_key] = this
 
     this.ref = ref([])
     this._refresh()
@@ -102,6 +105,9 @@ export const Schedules = new APIDatabase("schedules", Schedule)
 export const Projects = new APIDatabase("projects", Project)
 export const FocusSessions = new APIDatabase("focus_sessions", FocusSession)
 
+class APIWatcherClass extends EventEmitter {}
+export const APIWatcher = new APIWatcherClass()
+
 export async function API_Refresh() {
   await Promise.all([
     PlannerTasks._refresh(),
@@ -114,4 +120,6 @@ export async function API_Refresh() {
   if (FocusedProject.value != null) {
     FocusedProject.value = Projects.findEntry(FocusedProject.value._id)
   }
+
+  APIWatcher.emit("refresh")
 }

@@ -7,11 +7,12 @@ import { currMonth, currYear, sidebarOpened, isMobile } from '../persist';
 
 import {Router, Views} from "../router"
 import { openSchedulePopup } from '../popups/new_schedule';
-import { Projects, Schedules } from '../api';
+import { FocusSessions, Projects, Schedules } from '../api';
 import { openProjectPopup } from '../popups/new_project';
-import { project_items, schedule_items } from '../contextmenu';
-import { Project } from 'bolta-tasks-core';
+import { focus_session_items, project_items, schedule_items } from '../contextmenu';
+import { FocusSession, Project, ProjectTask } from 'bolta-tasks-core';
 import { openFocusSessionPopup } from '../popups/new_focus_session';
+import { CalendarDate_fromDate } from 'bolta-tasks-core/src/types';
 
 </script>
 
@@ -22,8 +23,8 @@ import { openFocusSessionPopup } from '../popups/new_focus_session';
     <Calendar></Calendar>
     <!-- <SidebarButton label="TaskList" :func="() => { Router.switch(Views.TASKS, `TaskListView`) }" /> -->
     <!-- <SidebarButton label="Planner" :func="() => { Router.switch(Views.PLANNER, `Planner`) }" /> -->
-    <SidebarButton label="Focus" :func="() => { Router.switch(Views.SESSIONS, `Focus Sessions`, openFocusSessionPopup) }" />
-    <SidebarButton label="Projects" :func="() => { Router.switch(Views.SESSIONS, `Projects`, openProjectPopup) }" :items="project_items" :children="Projects.value.map(project => [project.title, project])" :child_func="(project: Project) => {Router.switch_to_project(project)}"/>
+    <SidebarButton label="Focus" :func="() => { Router.switch(Views.SESSIONS, `Focus Sessions`, openFocusSessionPopup) }" :items="focus_session_items" :children="FocusSessions.value.map(focus_session => [focus_session.title, focus_session])" :child_func="(focus_session: FocusSession) => {Router.switch_to_focus_session(focus_session)}" />
+    <SidebarButton label="Projects" :func="() => { Router.switch(Views.SESSIONS, `Projects`, openProjectPopup) }" :items="project_items" :children="Projects.value.map(project => [project.title, project])" :child_func="(project: Project) => {Router.switch_to_project(project)}" :childStateFunc="(project: Project) => { return ((project.tasks.some((task: ProjectTask) => task.state() == 'OVERDUE') ? 'OVERDUE' : (project.isOnDate(CalendarDate_fromDate(new Date()))) ? 'TODO' : 'NONE')) }"/>
     <SidebarButton label="Schedules" :func="() => { Router.switch(Views.SCHEDULES, `Schedules`, openSchedulePopup) }" :items="schedule_items" :children="Schedules.value.map(schedule => [schedule.title, schedule])" />
 </div>
 </template>

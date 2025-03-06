@@ -10,13 +10,15 @@ export const YEAR = DAY * 365
 export function parseDuration(duration: number) {
     let hours = Math.floor(duration / HOUR)
     let remainder = duration - (hours * HOUR)
-    let minutes = (remainder / MINUTE)
+    let minutes = Math.floor(remainder / MINUTE)
+    let seconds = Math.floor((duration - (hours * HOUR) - (minutes * MINUTE)) / SECOND)
+    let milliseconds = (duration - (hours * HOUR) - (minutes * MINUTE) - (seconds * SECOND))
 
-    return {hours, minutes}
+    return {hours, minutes, seconds, milliseconds}
 }
 
-export function parseDurationString(duration: number) {
+export function parseDurationString(duration: number, include_seconds = false) {
     let parsedDuration = parseDuration(duration)
 
-    return parsedDuration.hours + ":" + String(parsedDuration.minutes).padStart(2, "0")
+    return String(parsedDuration.hours).padStart(2, "0") + ":" + String(parsedDuration.minutes).padStart(2, "0") + (include_seconds ? ":" + String(parsedDuration.seconds).padStart(2, "0") : "")
 }

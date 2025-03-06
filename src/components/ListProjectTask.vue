@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import { CalendarDate_toString, CleanTaskStatuses, Project, ProjectTask, TaskStatus, TaskStatuses } from 'bolta-tasks-core';
-import ListTaskBean from './ListTaskBean.vue';
+import { CleanTaskStatuses, ProjectTask, TaskStatus, TaskStatuses } from 'bolta-tasks-core';
 import moment from 'moment';
 import { openContextMenu } from '../contextmenu';
 import { computed, ComputedRef } from 'vue';
 import { MenuItem } from 'primevue/menuitem';
-import { PlannerTasks } from '../api';
-import { FocusedDate } from '../persist';
 import { SubAPI } from '../sub_api';
 
 const props = defineProps<{
@@ -62,7 +59,8 @@ const items_base: ComputedRef<MenuItem[]> = computed(() => {
     <p class="list-project-task-title">{{ task.title }}</p>
   </div>
   <div class="list-project-task-right-bottom">
-    <ListTaskBean v-for="beanText in beanTexts()" :text="beanText"></ListTaskBean>
+    <p class="list-project-task-time-label">{{ String(moment(task.due).format("MMM Do YYYY h:mm A")) }}</p>
+    <!-- <ListTaskBean v-for="beanText in beanTexts()" :text="beanText"></ListTaskBean> -->
   </div>
   </div>
 </div>
@@ -89,7 +87,7 @@ const items_base: ComputedRef<MenuItem[]> = computed(() => {
 
 .list-project-task-right {
   width: calc(100% - 100px - 15px);
-  height: 100%;
+  height: 100px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -98,6 +96,16 @@ const items_base: ComputedRef<MenuItem[]> = computed(() => {
 .list-project-task-right-bottom {
   display: flex;
   gap: 8px;
+  flex-direction: column;
+  place-content: center;
+  height: 100%;
+}
+
+.list-project-task-time-label {
+  font-family: 'MontserratBold';
+  font-size: 26px;
+  color: var(--theme-text-2);
+  opacity: 0.25;
 }
 
 .list-project-task-left {
@@ -115,7 +123,7 @@ const items_base: ComputedRef<MenuItem[]> = computed(() => {
   height: calc(80% - 30px);
   min-height: calc(80% - 30px);
   background: var(--theme-back-3);
-  border-radius: 15px;
+  border-radius: 50%;
   border: 15px var(--theme-back-1) solid;
 }
 

@@ -4,10 +4,8 @@ import {Router} from "../router"
 import HeaderButton from "./HeaderButton.vue"
 import { isMobile, sidebarOpened } from "../persist";
 import { MenuItem } from "primevue/menuitem";
-import { Ref, ref } from "vue";
 import { openPlannerTaskPopup } from "../popups/new_planner_task";
 import { openSchedulePopup } from "../popups/new_schedule";
-import { ContextMenu } from "primevue";
 import { openProjectPopup } from "../popups/new_project";
 import { openContextMenu } from "../contextmenu";
 

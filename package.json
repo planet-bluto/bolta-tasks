@@ -7,8 +7,10 @@
     "dev": "vite",
     "preview": "vite preview",
     "build_android": "vue-tsc -b && vite build && npx cap sync",
+    "start_android": "npm run build_android && npx cap open android",
     "build_electron": "vue-tsc -b && vite build && copy-folder ./dist ./electron/app && cd electron && npm run build && npm run electron:pack && cd ..",
-    "bro": "copy-folder ./dist ./electron/app"
+    "start_electron": "npm run build_electron && cd electron && npm run electron:start",
+    "build_electron_no_build": "cd electron && npm run electron:pack && cd .."
   },
   "dependencies": {
     "@capacitor-community/electron": "^5.0.1",

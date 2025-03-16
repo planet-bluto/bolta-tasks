@@ -58,6 +58,7 @@ img.emoji {
 * { 
   user-select: none; 
   -webkit-user-select: none; /* Safari */
+  scroll-behavior: smooth;
 }
 /* 
 animation-name: pinging;

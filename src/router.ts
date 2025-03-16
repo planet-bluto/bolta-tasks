@@ -1,6 +1,6 @@
 import {Ref, ref} from 'vue'
 import { CalendarDate, FocusSession, Project } from 'bolta-tasks-core'
-import { FocusedDate, FocusedProject, FocusedSession, TaskListFilters } from './persist'
+import { FocusedDate, FocusedProject, FocusedProjectID, FocusedSession, TaskListFilters } from './persist'
 import { Task } from 'bolta-tasks-core'
 import moment from 'moment'
 import EventEmitter from 'eventemitter3';
@@ -51,7 +51,7 @@ class RouterClass extends EventEmitter {
         this.addButtonFunc.value = () => {
             openProjectTaskPopup({project_id: project._id} as any)
         }
-        FocusedProject.value = project
+        FocusedProjectID.value = project._id
         print("new project :) (agony)", FocusedProject.value)
 
         this.emit("switch")

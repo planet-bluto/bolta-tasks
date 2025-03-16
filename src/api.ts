@@ -1,14 +1,15 @@
 import axios, { AxiosInstance } from "axios";
-import { computed, ComputedRef, Ref, ref } from "vue";
+import { computed, ComputedRef, Ref, ref, triggerRef } from "vue";
 import { PlannerTask, ProjectTask, Schedule, Project } from "bolta-tasks-core";
 import EventEmitter from "eventemitter3";
 
 import { Interfacer } from "bolta-tasks-core"
 import { FocusSession } from "bolta-tasks-core";
 import { FocusedProject } from "./persist";
+import { wait } from "./wait";
 
-// export const API_ENDPOINT = "https://bolta.planet-bluto.net"
-export const API_ENDPOINT = "http://192.168.1.237:26582"
+export const API_ENDPOINT = "https://bolta.planet-bluto.net"
+// export const API_ENDPOINT = "http://192.168.1.237:26582"
 
 class FetchedEventClass extends EventEmitter {}
 export const FetchedEvent = new FetchedEventClass()
@@ -23,7 +24,8 @@ class APIDatabase {
   db_key: string;
   ref: Ref<any[]>;
   construct: any;
-  compute: ComputedRef<any[]>;
+  compute: () => any[];
+  dict: Ref<{}> = ref({});
 
   constructor(db_key, construct = null) {
     this.construct = construct
@@ -37,8 +39,9 @@ class APIDatabase {
     this.ref = ref([])
     this._refresh()
 
-    this.compute = computed(() => {
+    this.compute = (() => {
       let arr = this.ref.value
+      // print("COMPUTING??", arr)
       if (this.construct) {
         arr = arr.map(entry => (new this.construct(entry)))
       }
@@ -46,10 +49,17 @@ class APIDatabase {
     })
   }
 
-  async _refresh() {
+  async _refresh(objs = null, bro = false) {
     print("REFRESHING DATABASE...")
-    let objs = await this.get_all(true)
+    if (objs == null) {
+      objs = await this.get_all(true)
+    }
     this.ref.value = objs
+    this.dict.value = {}
+    this.ref.value.forEach(entry => {
+      this.dict.value[entry._id] = (this.construct ? new this.construct(entry) : entry)
+    })
+    // triggerRef(this.ref)
     print(`DATABASE [${this.db_key}]: `, this.ref.value)
     fetched.value.add(this.db_key)
 
@@ -61,10 +71,12 @@ class APIDatabase {
     if (to_fetch.every(key => fetched.value.has(key))) {
       FetchedEvent.emit("fetched")
     }
+
+    if (!bro) { APIWatcher.emit(this.db_key+"_refresh") }
   }
 
   get value() {
-    return this.compute.value
+    return this.compute()
   }
 
   async _base_request(method: ("GET" | "POST" | "PATCH" | "PUT" | "DELETE"), url: string, data: object = null, refresh = false) {
@@ -115,11 +127,10 @@ export async function API_Refresh() {
     Projects._refresh(),
     FocusSessions._refresh(),
   ])
-  
-  print("Refreshing Focused Project ", FocusedProject.value)
-  if (FocusedProject.value != null) {
-    FocusedProject.value = Projects.findEntry(FocusedProject.value._id)
-  }
 
   APIWatcher.emit("refresh")
 }
+
+APIWatcher.on("projects_refresh", async () => {
+  Projects._refresh(null, true) // WHY???? WHY- LITERALLY WHY I'M SO FUCKING CONFUSED, FUCK YOU.
+})

@@ -1,10 +1,12 @@
 import type { CapacitorElectronConfig } from '@capacitor-community/electron';
 import { getCapacitorElectronConfig, setupElectronDeepLinking } from '@capacitor-community/electron';
 import type { MenuItemConstructorOptions } from 'electron';
-import { app, MenuItem } from 'electron';
+import { app, ipcMain, MenuItem, Notification, shell } from 'electron';
 import electronIsDev from 'electron-is-dev';
 import unhandled from 'electron-unhandled';
 import { autoUpdater } from 'electron-updater';
+import fs from 'fs';
+import path from 'path';
 
 import { ElectronCapacitorApp, setupContentSecurityPolicy, setupReloadWatcher } from './setup';
 
@@ -41,6 +43,30 @@ if (electronIsDev) {
 (async () => {
   // Wait for electron app to be ready.
   await app.whenReady();
+
+  ipcMain.on("notify", (_e, opts) => {
+    let notification = new Notification(opts)
+    notification.show()
+  })
+
+  ipcMain.on("sleep_alarm", (_e) => {
+    let sleep_path = path.join(app.getPath("documents"), "BoltaTasks", "sleep")
+
+    // let notification = new Notification({title: "Sleep Incoming", body: `userData: ${} | appPath: ${app.getAppPath()} | __dirname: ${__dirname} | sleep_path: ${sleep_path}`})
+    // notification.show()
+
+    fs.readdir(sleep_path, (err, files) => {
+      if (err) {
+        console.error('Error reading directory:', err);
+        return;
+      }
+  
+      files.forEach(file => {
+        const filePath = path.join(sleep_path, file);
+        shell.openPath(filePath)
+      });
+    });
+  })
   // Security - Set Content-Security-Policy based on whether or not we are in dev mode.
   setupContentSecurityPolicy(myCapacitorApp.getCustomURLScheme());
   // Initialize our app, build windows, and load content.

@@ -10,19 +10,30 @@ import ResetIcon from "../../assets/icons/reset.vue"
 import NextIcon from "../../assets/icons/next.vue"
 import BackIcon from "../../assets/icons/back.vue"
 import { APIWatcher, Projects } from '../../api';
-import { Project } from 'bolta-tasks-core';
-
-import draggable from 'vuedraggable'
+import { CleanTaskStatuses, Project, ProjectTask, ProjectTaskStatic, TaskStatus, TaskStatuses } from 'bolta-tasks-core';
 
 const CurrentTimer = computed(() => {
   return Timers.value[FocusedSession.value?._id]
 })
+
+const taskList = ref([])
 
 const CurrentProject: ComputedRef<Project | null> = computed(() => {
   let res = null
   if (FocusedSession.value?.project != null && FocusedSession.value?.project != "null") {
     res = Projects.findEntry(FocusedSession.value?.project)
     print("TRIGGERED: ", res)
+  }
+
+  if (res) { print(res.tasks); taskList.value = res.tasks }
+
+  return res
+})
+
+const CurrentTask: ComputedRef<ProjectTask | null> = computed(() => {
+  let res = null
+  if (CurrentProject.value != null && CurrentProject.value.current_tasks.length > 0) {
+    res = CurrentProject.value.current_tasks[0]
   }
 
   return res
@@ -80,16 +91,36 @@ document.addEventListener("pointerup", e => {
 
 const taskQueueOpened = ref(true)
 
-const taskList = ref([])
-
 import { useSortable, moveArrayElement } from '@vueuse/integrations/useSortable'
 import { SubAPI } from '../../sub_api';
 const taskQueueEl = useTemplateRef("sortable")
-useSortable(taskQueueEl, CurrentProject.value?.tasks, {onUpdate: async (e) => {
+useSortable(taskQueueEl, taskList.value, {onUpdate: async (e) => {
   print("erm. ", e.oldIndex, e.newIndex)
+  moveArrayElement(taskList.value, e.oldIndex, e.newIndex, e)
   await new SubAPI("projects", CurrentProject.value._id, "tasks").move(e.oldIndex, e.newIndex)
-  moveArrayElement(CurrentProject.value?.tasks, e.oldIndex, e.newIndex, e)
+  // moveArrayElement(CurrentProject.value?.tasks, e.oldIndex, e.newIndex, e)
 }})
+
+import { openProjectTaskPopup } from '../../popups/new_project_task';
+import { openContextMenu, project_task_items } from '../../contextmenu';
+import { MenuItem } from 'primevue/menuitem';
+
+async function toggleCompleted(task: ProjectTaskStatic) {
+  await new SubAPI("projects", task.project_id, "tasks").edit(task._index, {status: (task.status != TaskStatus.COMPLETED ? TaskStatus.COMPLETED : TaskStatus.NOT_STARTED)})
+}
+
+const items_base: ComputedRef<MenuItem[]> = computed(() => {
+  return Object.keys(CleanTaskStatuses).map((status_key: string) => {
+    return { label: status_key, command: async (event) => {
+      let task = event.item.data
+      let status: TaskStatus = (CleanTaskStatuses[status_key] as TaskStatus)
+      
+      print("SETTING TASK TO => ", status)
+      await new SubAPI("projects", task.project_id, "tasks").edit(task._index, {status})
+    }}
+  })
+})
+
 </script>
 
 <template>
@@ -101,7 +132,7 @@ useSortable(taskQueueEl, CurrentProject.value?.tasks, {onUpdate: async (e) => {
   <div id="center">
     <p ref="timestamp" id="timer-stamp">{{ time_remaining }}</p>
     <div id="interval-dots">
-      <div v-for="(interval, index) in (FocusedSession?.interval || [])" class="interval-dot" :is_current="Timers[FocusedSession?._id]?.current_interval_index == index">
+      <div v-for="(interval, index) in (FocusedSession?.interval || [])" @click="CurrentTimer.jump(index)" class="interval-dot" :is_current="Timers[FocusedSession?._id]?.current_interval_index == index">
         <p class="interval-dot-header">{{ interval.label }}</p>
         <p class="interval-dot-duration">{{ parseDurationString(interval.duration, true) }}</p>
       </div>
@@ -114,15 +145,26 @@ useSortable(taskQueueEl, CurrentProject.value?.tasks, {onUpdate: async (e) => {
       <button v-if="Timers[FocusedSession?._id]?.running" class="timer-button" @click="Timers[FocusedSession?._id]?.pause()"><PauseIcon/></button>
       <button class="timer-button" @click="Timers[FocusedSession?._id]?.next()"><NextIcon/></button>
     </div>
-    <div id="current-task"></div>
-  </div>
-  <div id="task-queue-panel" :opened="taskQueueOpened">
-    <p id="task-queue-header">Session Tasks</p>
-    <div id="task-queue" ref="sortable">
-      <div class="task-queue-item" v-for="task in CurrentProject?.tasks">
-          <p>{{task.title}}</p>
+    <div v-if="CurrentProject != null && CurrentProject.current_tasks.length > 0" id="current-task-container">
+      <p id="current-task-header">Current Task:</p>
+      <div id="current-task" @contextmenu="event => {openContextMenu(event, items_base, CurrentTask, `Update '${CurrentTask.title}'`)}">
+        <p>{{ CurrentTask?.title }}</p>
       </div>
     </div>
+  </div>
+  <div id="task-queue-panel" :opened="taskQueueOpened && CurrentProject != null">
+    <p id="task-queue-header">Session Tasks</p>
+    <div id="task-queue" ref="sortable">
+      <div class="task-queue-item" v-for="task in taskList" @contextmenu="event => openContextMenu(event, project_task_items, task, task.title)" :status="(() => TaskStatuses[task.status])()">
+        <div class="task-queue-item-left">
+          <div class="task-queue-item-status" @click="toggleCompleted(task)" @contextmenu="event => {openContextMenu(event, items_base, task, `Update '${task.title}'`)}" :status="(() => TaskStatuses[task.status])()"></div>
+        </div>
+        <div class="task-queue-item-right">
+          <p>{{task.title}}</p>
+        </div>
+      </div>
+    </div>
+    <button @click="openProjectTaskPopup({project_id: CurrentProject._id} as any)">ADD TASK :)</button>
   </div>
 </div>
 </div>
@@ -144,6 +186,7 @@ useSortable(taskQueueEl, CurrentProject.value?.tasks, {onUpdate: async (e) => {
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  gap: 25px;
 }
 
 #center {
@@ -217,6 +260,26 @@ useSortable(taskQueueEl, CurrentProject.value?.tasks, {onUpdate: async (e) => {
   border: none;
 }
 
+#current-task-container {
+  width: 100%;
+}
+
+#current-task-header {
+  font-family: 'MontserratBold';
+  opacity: 0.5;
+  font-size: 48px;
+}
+
+#current-task {
+  width: calc(100% - 30px);
+  height: calc(64px - 30px);
+  font-family: 'MontserratBold';
+  font-size: 24px;
+  background: var(--theme-back-2);
+  border-radius: 15px;
+  padding: 15px;
+}
+
 #task-queue-panel {
   display: flex;
   flex-direction: column;
@@ -234,6 +297,8 @@ useSortable(taskQueueEl, CurrentProject.value?.tasks, {onUpdate: async (e) => {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  height: 100%;
+  overflow-y: scroll;
 }
 
 #task-queue-header {
@@ -244,11 +309,45 @@ useSortable(taskQueueEl, CurrentProject.value?.tasks, {onUpdate: async (e) => {
 }
 
 .task-queue-item {
+  display: flex;
   width: calc(100% - 30px);
-  height: calc(64px - 30px);
+  height: calc(80px - 30px);
+  min-height: calc(80px - 30px);
   padding: 15px;
   font-family: 'MontserratBold';
+  font-size: 24px;
   background: var(--theme-back-2);
   border-radius: 15px;
+  align-items: center;
 }
+
+.task-queue-item[status="COMPLETED"] { opacity: 0.1 }
+.task-queue-item[status="SKIPPED"] { opacity: 0.1 }
+.task-queue-item[status="FAILED"] { opacity: 0.1 }
+
+.task-queue-item-left {
+  min-width: 80px;
+  width: 80px;
+  min-height: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.task-queue-item-status {
+  width: calc(80% - 30px);
+  height: calc(80% - 30px);
+  min-height: calc(80% - 30px);
+  margin-left: -30px;
+  /* margin-top: -30px; */
+  background: var(--theme-back-3);
+  border-radius: 50%;
+  border: 15px var(--theme-back-1) solid;
+}
+
+.task-queue-item-status[status="COMPLETED"] { background: var(--theme-positive) }
+.task-queue-item-status[status="IN_PROGRESS"] { background: var(--theme-waiting) }
+.task-queue-item-status[status="SKIPPED"] { background: var(--theme-skipped) }
+.task-queue-item-status[status="FAILED"] { background: var(--theme-danger) }
 </style>

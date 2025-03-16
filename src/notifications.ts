@@ -1,4 +1,5 @@
 import { Ref, ref } from "vue";
+import { socket } from "./socket";
 
 export interface NotificationPayload {
   title: string;
@@ -13,3 +14,7 @@ export class NotificationHandlerBase {
 }
 
 export const NotificationHandler: Ref<NotificationHandlerBase> = ref(new NotificationHandlerBase())
+
+socket.on("notification", payload => {
+  NotificationHandler.value.fire(payload)
+})
